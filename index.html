@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VendTrack - Vending Machine Inventory System</title>
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Lucide Icons Library (via CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="app-container">
+    
+    <!-- ==========================================
+         SIDEBAR NAVIGATION
+         ========================================== -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <i data-lucide="package-search"></i>
+        </div>
+        <span class="logo-text">VendTrack</span>
+      </div>
+
+      <nav>
+        <ul class="sidebar-nav">
+          <li class="nav-item active" data-view="dashboard">
+            <button id="btn-nav-dashboard">
+              <i data-lucide="layout-dashboard"></i>
+              <span>Dashboard</span>
+            </button>
+          </li>
+          <li class="nav-item" data-view="machines">
+            <button id="btn-nav-machines">
+              <i data-lucide="door-closed"></i>
+              <span>Machines</span>
+            </button>
+          </li>
+          <li class="nav-item" data-view="warehouse">
+            <button id="btn-nav-warehouse">
+              <i data-lucide="warehouse"></i>
+              <span>Warehouse Stock</span>
+            </button>
+          </li>
+          <li class="nav-item" data-view="logs">
+            <button id="btn-nav-logs">
+              <i data-lucide="history"></i>
+              <span>Activity Logs</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="owner-profile">
+          <div class="owner-avatar">MM</div>
+          <div class="owner-info">
+            <div class="owner-name">Mickey Moriarty</div>
+            <div class="owner-role">Operator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==========================================
+         MAIN INTERACTIVE DISPLAY PANEL
+         ========================================== -->
+    <main class="main-content">
+      
+      <!-- 1. DASHBOARD VIEW -->
+      <section id="view-dashboard" class="view-section active">
+        <div class="header-container">
+          <div class="header-title-section">
+            <h1>Business Dashboard</h1>
+            <p>Welcome back! Here's your vending operation performance over the past week.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btn-quick-restock-trigger" style="display: none;">
+              <i data-lucide="bolt"></i>
+              <span>Quick Restock</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs Summary Grid -->
+        <div class="kpi-grid">
+          <div class="glass-card kpi-card purple" id="kpi-revenue">
+            <!-- Rendered by components.js -->
+          </div>
+          <div class="glass-card kpi-card cyan" id="kpi-profit">
+            <!-- Rendered by components.js -->
+          </div>
+          <div class="glass-card kpi-card success" id="kpi-health">
+            <!-- Rendered by components.js -->
+          </div>
+          <div class="glass-card kpi-card pink" id="kpi-alerts">
+            <!-- Rendered by components.js -->
+          </div>
+        </div>
+
+        <!-- Dashboard Charts Layout -->
+        <div class="dashboard-layout">
+          <!-- Sales Trend Line Plot -->
+          <div class="glass-card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">Sales Revenue &bull; Last 7 Days</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: var(--accent-purple); border-radius: 50%;"></span>
+                <span>Revenue ($)</span>
+              </div>
+            </div>
+            <div class="chart-container" id="dashboard-sales-chart">
+              <!-- Rendered dynamically by components.js SVG engine -->
+            </div>
+          </div>
+
+          <!-- Restock Alerts -->
+          <div class="glass-card alerts-card">
+            <div class="alerts-header">
+              <div class="chart-title" style="display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="alert-circle" style="color: var(--accent-pink); width: 18px;"></i>
+                <span>Restock Alerts</span>
+              </div>
+            </div>
+            <div class="alerts-list" id="dashboard-alerts-list">
+              <!-- Rendered dynamically by components.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. MACHINES SECTION VIEW -->
+      <section id="view-machines" class="view-section">
+        <div class="header-container">
+          <div class="header-title-section">
+            <h1>Active Vending Machines</h1>
+            <p>Deploy and maintain your physical vending machines at retail locations.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btn-add-machine-trigger">
+              <i data-lucide="plus-circle"></i>
+              <span>Deploy New Machine</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="machine-cards-grid" id="machines-grid-container">
+          <!-- Dynamic Machine list cards rendered here -->
+        </div>
+      </section>
+
+      <!-- 2B. MACHINE DETAIL SUB-VIEW -->
+      <section id="view-machine-detail" class="view-section">
+        <button class="back-button" id="btn-back-to-machines">
+          <i data-lucide="arrow-left"></i>
+          <span>Back to Machines</span>
+        </button>
+
+        <div class="glass-card machine-detail-header-card">
+          <div class="machine-detail-info">
+            <div class="machine-detail-icon">
+              <i data-lucide="door-closed" style="color: var(--text-primary);"></i>
+            </div>
+            <div>
+              <h2 id="detail-machine-name" style="font-size: 1.5rem; font-weight: 800;">Lobby Combo Max</h2>
+              <p id="detail-machine-location" style="color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                <i data-lucide="map-pin" style="width: 14px;"></i> <span>Main Lobby</span>
+              </p>
+            </div>
+          </div>
+          
+          <div class="detail-kpis">
+            <div class="detail-kpi-item">
+              <div class="detail-kpi-val" id="detail-stock-count">0 / 0</div>
+              <div class="detail-kpi-lbl">Assigned Units</div>
+            </div>
+            <div class="detail-kpi-item">
+              <div class="detail-kpi-val" id="detail-empty-coils">0</div>
+              <div class="detail-kpi-lbl">Empty Slots</div>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <button class="btn btn-outline-cyan" id="btn-restock-machine-all">
+              <i data-lucide="sparkles"></i>
+              <span>Smart-Refill All</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cabinet Glass representation -->
+        <div class="vending-cabinet-outer">
+          <div class="vending-cabinet-glass">
+            <!-- Coils Grid populated dynamically -->
+            <div class="vending-coil-grid" id="cabinet-coils-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. WAREHOUSE STOCK (PRODUCT CATALOG) VIEW -->
+      <section id="view-warehouse" class="view-section">
+        <div class="header-container">
+          <div class="header-title-section">
+            <h1>Warehouse stock & Catalog</h1>
+            <p>Manage your central inventory catalog. Restock items to move them into machines.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btn-add-product-trigger">
+              <i data-lucide="plus-circle"></i>
+              <span>Register Product</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="warehouse-layout">
+          <!-- Main Table List -->
+          <div class="glass-card" style="padding: 20px;">
+            <div class="catalog-search-row">
+              <div class="search-input-wrapper">
+                <i data-lucide="search" style="width: 16px;"></i>
+                <input type="text" id="catalog-search-input" class="search-input" placeholder="Search by product name or SKU...">
+              </div>
+              <select id="catalog-category-filter" class="select-filter">
+                <option value="All">All Categories</option>
+                <option value="Drink">Drinks</option>
+                <option value="Snack">Snacks</option>
+                <option value="Candy">Candies</option>
+              </select>
+            </div>
+
+            <div class="product-table-wrapper">
+              <table class="catalog-table">
+                <thead>
+                  <tr>
+                    <th>Product & SKU</th>
+                    <th>Category</th>
+                    <th>Cost Price</th>
+                    <th>Retail Price</th>
+                    <th>Markup Profit</th>
+                    <th>Warehouse Inventory</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="catalog-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sidebar Warehouse Stats Card -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-card">
+              <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 16px;">Warehouse Summary</h3>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                  <span style="color: var(--text-muted); font-size: 0.85rem;">Unique Products</span>
+                  <span style="font-weight: 700;" id="wh-stat-unique">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                  <span style="color: var(--text-muted); font-size: 0.85rem;">Total Warehouse stock</span>
+                  <span style="font-weight: 700;" id="wh-stat-total-stock">0 units</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted); font-size: 0.85rem;">Estimated Asset Value</span>
+                  <span style="font-weight: 700; color: var(--color-success);" id="wh-stat-value">$0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ACTIVITY LOGS VIEW -->
+      <section id="view-logs" class="view-section">
+        <div class="header-container">
+          <div class="header-title-section">
+            <h1>Transaction History</h1>
+            <p>Complete historical log of cash flow vending sales, coil restocks, and warehouse acquisitions.</p>
+          </div>
+        </div>
+
+        <div class="glass-card" style="padding: 20px;">
+          <div class="catalog-search-row">
+            <div class="search-input-wrapper">
+              <i data-lucide="search" style="width: 16px;"></i>
+              <input type="text" id="logs-search-input" class="search-input" placeholder="Search by item name or machine location...">
+            </div>
+            <select id="logs-type-filter" class="select-filter">
+              <option value="All">All Transactions</option>
+              <option value="sales">Vending Sales</option>
+              <option value="restocks">Restocking Runs</option>
+            </select>
+          </div>
+
+          <div class="product-table-wrapper">
+            <table class="catalog-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Transaction Type</th>
+                  <th>Product</th>
+                  <th>Location / Target</th>
+                  <th style="text-align: right;">Volume / Impact</th>
+                </tr>
+              </thead>
+              <tbody id="logs-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==========================================
+         DIALOG MODALS & SLIDE-IN DRAWERS
+         ========================================== -->
+         
+    <!-- Drawer: Deploy Machine -->
+    <div class="modal-overlay" id="drawer-add-machine">
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <span class="drawer-title">Deploy New Vending Machine</span>
+          <button class="drawer-close" data-close-drawer><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-add-machine">
+          <div class="form-group">
+            <label for="machine-name-input">Vending Machine Name</label>
+            <input type="text" id="machine-name-input" class="form-control" placeholder="e.g., Suite 200 Combo Mini" required>
+          </div>
+          <div class="form-group">
+            <label for="machine-location-input">Physical Placement Location</label>
+            <input type="text" id="machine-location-input" class="form-control" placeholder="e.g., Tech Center, 2nd floor elevator lobby" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="machine-rows-input">Cabinet Rows (A-J)</label>
+              <input type="number" id="machine-rows-input" class="form-control" min="1" max="8" value="4" required>
+            </div>
+            <div class="form-group">
+              <label for="machine-cols-input">Cabinet Columns (1-10)</label>
+              <input type="number" id="machine-cols-input" class="form-control" min="1" max="10" value="4" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" data-close-drawer>Cancel</button>
+            <button type="submit" class="btn btn-primary">Deploy Unit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drawer: Register Product -->
+    <div class="modal-overlay" id="drawer-add-product">
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <span class="drawer-title">Register Product Catalog</span>
+          <button class="drawer-close" data-close-drawer><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-add-product">
+          <div class="form-group">
+            <label for="product-name-input">Product Name</label>
+            <input type="text" id="product-name-input" class="form-control" placeholder="e.g., Baked BBQ Chips" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="product-category-select">Category</label>
+              <select id="product-category-select" class="form-control" required>
+                <option value="Snack">Snack</option>
+                <option value="Drink">Drink</option>
+                <option value="Candy">Candy</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="product-sku-input">SKU Barcode (Optional)</label>
+              <input type="text" id="product-sku-input" class="form-control" placeholder="e.g., SNK-BAK-BBQ">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="product-cost-input">Wholesale Unit Cost ($)</label>
+              <input type="number" id="product-cost-input" class="form-control" step="0.01" min="0.01" placeholder="0.45" required>
+            </div>
+            <div class="form-group">
+              <label for="product-price-input">Default Retail Price ($)</label>
+              <input type="number" id="product-price-input" class="form-control" step="0.01" min="0.01" placeholder="1.50" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="product-stock-input">Initial Warehouse stock units</label>
+            <input type="number" id="product-stock-input" class="form-control" min="0" value="50">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" data-close-drawer>Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drawer: Purchase Warehouse Inventory (Buy stock) -->
+    <div class="modal-overlay" id="drawer-buy-stock">
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <span class="drawer-title">Aquire Warehouse stock</span>
+          <button class="drawer-close" data-close-drawer><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-buy-stock">
+          <input type="hidden" id="buy-stock-product-id">
+          <div class="form-group">
+            <label>Product Selection</label>
+            <input type="text" id="buy-stock-product-name" class="form-control" style="background: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.03);" readonly>
+          </div>
+          <div class="form-group">
+            <label for="buy-stock-qty-input">Quantity to Acquire</label>
+            <input type="number" id="buy-stock-qty-input" class="form-control" min="1" value="50" required>
+          </div>
+          <div class="form-group">
+            <label>Estimated Wholesale Expense</label>
+            <div id="buy-stock-estimate-cost" style="font-size: 1.35rem; font-weight: 800; color: var(--accent-cyan);">$0.00</div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" data-close-drawer>Cancel</button>
+            <button type="submit" class="btn btn-primary">Confirm Purchase</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drawer: Configure Coil Slot -->
+    <div class="modal-overlay" id="drawer-config-coil">
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <span class="drawer-title">Coil Slot <span id="config-coil-title-badge" style="background: var(--accent-purple); padding: 2px 8px; border-radius: 6px;">A1</span> Layout</span>
+          <button class="drawer-close" data-close-drawer><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-config-coil">
+          <input type="hidden" id="config-coil-id">
+          
+          <div class="form-group">
+            <label for="config-coil-product-select">Assigned Product</label>
+            <select id="config-coil-product-select" class="form-control" required>
+              <!-- Dynamic product catalog mapping options populated by code -->
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="config-coil-price-input">Retail Unit Price ($)</label>
+              <input type="number" id="config-coil-price-input" class="form-control" step="0.01" min="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="config-coil-capacity-input">Max Coil Capacity</label>
+              <input type="number" id="config-coil-capacity-input" class="form-control" min="1" max="30" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" data-close-drawer>Cancel</button>
+            <button type="submit" class="btn btn-primary">Apply Settings</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drawer: Coil Smart Restock (Amount choice) -->
+    <div class="modal-overlay" id="drawer-restock-coil">
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <span class="drawer-title">Restock Coil Slot <span id="restock-coil-title-badge" style="background: var(--accent-purple); padding: 2px 8px; border-radius: 6px;">A1</span></span>
+          <button class="drawer-close" data-close-drawer><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-restock-coil">
+          <input type="hidden" id="restock-coil-id">
+          
+          <div class="form-group">
+            <label>Assigned Item</label>
+            <input type="text" id="restock-coil-product-name" class="form-control" style="background: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.03);" readonly>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Current Coil Inventory</label>
+              <div id="restock-coil-current-qty" style="font-size: 1.15rem; font-weight: 700; margin-top: 4px;">0 / 10</div>
+            </div>
+            <div class="form-group">
+              <label>Available in Warehouse</label>
+              <div id="restock-coil-warehouse-qty" style="font-size: 1.15rem; font-weight: 700; margin-top: 4px; color: var(--accent-cyan);">0 units</div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 16px;">
+            <label for="restock-coil-amount-input">Quantity to Transfer from Warehouse</label>
+            <input type="number" id="restock-coil-amount-input" class="form-control" min="1" required>
+            <p id="restock-coil-info-hint" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;"></p>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" data-close-drawer>Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-restock-submit">Transfer Stock</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Container for active pop-up notification messages -->
+    <div class="toast-container" id="toast-container"></div>
+
+  </div>
+
+  <!-- Custom Core SPA binding scripts -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
