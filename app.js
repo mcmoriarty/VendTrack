@@ -473,7 +473,7 @@ document.getElementById('logs-type-filter').addEventListener('change', refreshUI
 // ==========================================
 // STARTUP INITIALIZATION
 // ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+function init() {
   // Mobile Collapsible Sidebar bindings
   const toggleBtn = document.getElementById('btn-mobile-toggle');
   const backdrop = document.getElementById('sidebar-backdrop');
@@ -487,4 +487,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Pre-seed render
   refreshUI();
-});
+}
+
+// Safely execute init, accounting for async module readyState timing on mobile browsers
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
