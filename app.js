@@ -86,6 +86,25 @@ function switchView(targetViewId) {
   refreshUI();
 }
 
+function closeMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (sidebar && backdrop) {
+    sidebar.classList.remove('active');
+    backdrop.classList.remove('active');
+  }
+}
+
+function toggleMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (sidebar && backdrop) {
+    sidebar.classList.toggle('active');
+    backdrop.classList.toggle('active');
+  }
+}
+
+
 // ==========================================
 // DRAWERS / DIALOGS MANAGER
 // ==========================================
@@ -323,6 +342,7 @@ document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
   item.addEventListener('click', () => {
     const view = item.getAttribute('data-view');
     switchView(view);
+    closeMobileSidebar();
   });
 });
 
@@ -454,6 +474,17 @@ document.getElementById('logs-type-filter').addEventListener('change', refreshUI
 // STARTUP INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+  // Mobile Collapsible Sidebar bindings
+  const toggleBtn = document.getElementById('btn-mobile-toggle');
+  const backdrop = document.getElementById('sidebar-backdrop');
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', toggleMobileSidebar);
+  }
+  if (backdrop) {
+    backdrop.addEventListener('click', closeMobileSidebar);
+  }
+
   // Pre-seed render
   refreshUI();
 });

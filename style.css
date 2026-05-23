@@ -1452,3 +1452,264 @@ body {
 .toast-close:hover {
   color: var(--text-primary);
 }
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE LAYOUT STYLES
+   ========================================================================== */
+
+/* Mobile Header Bar & Backdrop Defaults */
+.mobile-header-bar {
+  display: none;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(4, 7, 15, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 80;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  /* Mobile Header Override */
+  .mobile-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 16px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+  }
+  
+  .mobile-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    transition: var(--transition-fast);
+  }
+  
+  .mobile-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .mobile-logo .logo-icon {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* App Container Stack */
+  #app-container {
+    flex-direction: column;
+    overflow-x: hidden;
+    height: auto;
+  }
+
+  /* Collapsible Sidebar Placement */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    bottom: 0;
+    width: 260px;
+    height: 100vh;
+    z-index: 100;
+    transition: transform var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar.active {
+    transform: translateX(260px);
+  }
+
+  /* Main View Padding Adjustment */
+  .main-content {
+    padding: 84px 16px 40px 16px;
+    height: calc(100vh - 60px);
+    margin-top: 60px;
+  }
+
+  /* Header Controls Collapsing */
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .header-title-section h1 {
+    font-size: 1.6rem;
+  }
+  
+  .header-actions {
+    width: 100%;
+  }
+  
+  .header-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Grids & Cards responsive wraps */
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .kpi-card {
+    padding: 16px;
+  }
+  
+  .kpi-value {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .chart-card {
+    min-height: 300px;
+    padding: 16px;
+  }
+  
+  .alerts-card {
+    max-height: none;
+    padding: 16px;
+  }
+
+  .machine-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Physical Vending Cabinet Mobile Optimization */
+  .vending-cabinet-outer {
+    padding: 12px;
+    border-width: 2px;
+    border-radius: 16px;
+  }
+  
+  .vending-cabinet-glass {
+    padding: 10px;
+    border-radius: 12px;
+  }
+  
+  .vending-coil-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+  
+  .coil-cell {
+    min-height: 140px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+  
+  .coil-product-visual {
+    width: 36px;
+    height: 36px;
+    margin: 12px 0 6px 0;
+  }
+  
+  .coil-product-name {
+    font-size: 0.75rem;
+  }
+
+  .machine-detail-header-card {
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .detail-kpis {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+  }
+  
+  .detail-kpi-item {
+    text-align: left;
+  }
+
+  /* Warehouse & Tables */
+  .warehouse-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-search-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .select-filter {
+    width: 100%;
+  }
+
+  .product-table-wrapper {
+    margin: 0 -4px;
+    border-radius: 8px;
+  }
+  
+  .catalog-table th, .catalog-table td {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+  
+  /* Hide non-essential columns on small mobile screens */
+  .catalog-table th:nth-child(2),
+  .catalog-table td:nth-child(2),
+  .catalog-table th:nth-child(3),
+  .catalog-table td:nth-child(3),
+  .catalog-table th:nth-child(5),
+  .catalog-table td:nth-child(5) {
+    display: none;
+  }
+
+  /* Logs Table Hide non-essential columns */
+  .catalog-table th:nth-child(1),
+  .catalog-table td:nth-child(1) {
+    font-size: 0.75rem;
+  }
+  
+  /* Drawers / Slide-in Menus fill screen */
+  .drawer-panel {
+    max-width: 100%;
+    padding: 24px 16px;
+    border-left: none;
+  }
+}
+

@@ -13,6 +13,9 @@
 
   <div id="app-container">
     
+    <!-- Backdrop overlay for mobile collapsible menu -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+    
     <!-- ==========================================
          SIDEBAR NAVIGATION
          ========================================== -->
@@ -63,6 +66,22 @@
         </div>
       </div>
     </aside>
+
+    <!-- ==========================================
+         MOBILE HEADER BAR
+         ========================================== -->
+    <header class="mobile-header-bar">
+      <button id="btn-mobile-toggle" class="mobile-toggle-btn">
+        <i data-lucide="menu"></i>
+      </button>
+      <div class="mobile-logo">
+        <div class="logo-icon" style="width: 28px; height: 28px; border-radius: 6px; box-shadow: none;">
+          <i data-lucide="package-search" style="font-size: 0.9rem;"></i>
+        </div>
+        <span class="logo-text" style="font-size: 1.15rem;">VendTrack</span>
+      </div>
+      <div style="width: 40px;"></div> <!-- Spacer for centering title -->
+    </header>
 
     <!-- ==========================================
          MAIN INTERACTIVE DISPLAY PANEL
